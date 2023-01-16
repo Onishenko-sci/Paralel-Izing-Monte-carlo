@@ -1,1 +1,0 @@
-# Paralel-Izing-Monte-carlo
