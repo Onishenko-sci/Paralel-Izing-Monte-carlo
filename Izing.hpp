@@ -1,5 +1,9 @@
 #include <vector>
 #include <mutex>
+#include <iostream>
+#include "Barrier.hpp"
+
+#define NUM_OF_THREADS 4
 
 class Izing
 {
@@ -10,22 +14,43 @@ private:
     double kT;
     double h;
     size_t Lattice_size;
+    std::vector<std::vector<int>> Magnetizations;
+    std::vector<std::vector<int>> Energy;
+    std::vector<size_t> my_step;
+    
+    std::vector<std::vector<int>> thread_relative_step;
 
     // Threads parameters
     size_t Number_of_threads;
-    std::mutex synch;
+    std::mutex *Mutexi;
+    std::mutex observed;
+    int steps_with_block;
     size_t layer_hight;
-    friend void simulation(size_t thread_id, Izing &lattice, unsigned int steps);
+    size_t Frame_rate;
+    friend void warm(size_t thread_id, Izing &lattice, unsigned int steps);
+    friend void simulate(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
+    friend void simulate_block(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
 
+    friend void checkmate(size_t thread_id, Izing &lattice, unsigned int steps, Barrier& bar);
+    long int Steps;
     double work_time;
     double near_bounds_energy(int i, int j);
+
 public:
     Izing(double J, double h = 0);
     void init(const size_t Lattice_Size);
-    void MC_simulation(unsigned long int steps, double kT, int Number_of_threads = 4);
+
+    void warming_up(unsigned long int steps, double kT, int Number_of_threads = 4);
+    void simulation(unsigned long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);
+    void simulation_block(unsigned long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);
+
+    void chess(unsigned long int steps, double kT, int Number_of_threads = 4);
+    void write_relative_step();
+
     double config_energy() const;
     double magnetization() const;
     void show() const;
     double how_long() const { return work_time; };
+    void report();
     ~Izing();
 };

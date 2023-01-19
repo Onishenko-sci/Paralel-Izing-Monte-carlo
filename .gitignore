@@ -1,7 +1,7 @@
 # Prerequisites
 *.d
 *.vscode
-
+./Barrier.cpp
 # Compiled Object files
 *.slo
 *.lo
