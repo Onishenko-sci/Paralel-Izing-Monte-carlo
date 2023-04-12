@@ -278,6 +278,7 @@ void rand_spin(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
         {
             Current_M += izing.config[i][j];
             Current_E += izing.near_bounds_energy(i, j);
+            // не учитываем нижнюю связь нижнего слоя. она учитывается как верхняя в следующем слое.
             if (i == thread_last_layer && thread_id != Last_thread_id)
                 Current_E += izing.J * izing.config[i][j] * izing.config[i + 1][j];
         }
