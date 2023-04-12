@@ -28,10 +28,9 @@ private:
     size_t layer_hight;
     size_t Frame_rate;
     friend void warm(size_t thread_id, Izing &lattice, unsigned int steps);
-    friend void simulate(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
-    friend void simulate_block(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
+    friend void rand_spin(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
 
-    friend void checkmate(size_t thread_id, Izing &lattice, unsigned int steps, Barrier& bar);
+    friend void chess(size_t thread_id, Izing &lattice, unsigned int steps, Barrier& bar);
     long int Steps;
     double work_time;
     double near_bounds_energy(int i, int j);
@@ -41,16 +40,16 @@ public:
     void init(const size_t Lattice_Size);
 
     void warming_up(unsigned long int steps, double kT, int Number_of_threads = 4);
-    void simulation(unsigned long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);
-    void simulation_block(unsigned long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);
+    void layered_rand(unsigned long long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);
 
-    void chess(unsigned long int steps, double kT, int Number_of_threads = 4);
+    void layered_chess(unsigned long int steps, double kT, int Number_of_threads = 4);
     void write_relative_step();
 
     double config_energy() const;
     double magnetization() const;
     void show() const;
     double how_long() const { return work_time; };
+    double block();
     void report();
     ~Izing();
 };
