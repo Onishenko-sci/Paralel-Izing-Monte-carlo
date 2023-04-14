@@ -423,73 +423,72 @@ void chess(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
                 Current_E += izing.J * izing.config[i][j] * izing.config[i + 1][j];
         }
     }
+
     bool black = false;
-    bool odd = false;
+
     for (unsigned long int step = 0; step < steps; step++)
     {
         // Progress bar
-       // if (step % (steps / 20) == 0)
-       //      cout << thread_id << std::flush;
+        // if (step % (steps / 20) == 0)
+        //      cout << thread_id << std::flush;
 
-        if (!(step % 2))
+        // Black
+        for (int i = thread_first_layer; i <= thread_last_layer; i++)
         {
-            for (int i = thread_first_layer; i <= thread_last_layer; i++)
+            black = i % 2;
+            for (int j = black; j <= last_j; j += 2)
             {
-                odd = i % 2;
-                for (int j = odd; j <= last_j; j += 2)
+                energy_before_change = izing.near_bounds_energy(i, j);
+                dE = -2 * energy_before_change;
+                change_spin = false;
+                if (dE > 0)
                 {
-                    energy_before_change = izing.near_bounds_energy(i, j);
-                    dE = -2 * energy_before_change;
-                    change_spin = false;
-                    if (dE > 0)
-                    {
-                        R = std::exp(-dE / izing.kT);
-                        if (R > distr(gen))
-                        {
-                            izing.config[i][j] *= -1;
-                            Current_M += 2 * izing.config[i][j];
-                            Current_E += dE;
-                        }
-                    }
-                    else
+                    R = std::exp(-dE / izing.kT);
+                    if (R > distr(gen))
                     {
                         izing.config[i][j] *= -1;
                         Current_M += 2 * izing.config[i][j];
                         Current_E += dE;
                     }
                 }
+                else
+                {
+                    izing.config[i][j] *= -1;
+                    Current_M += 2 * izing.config[i][j];
+                    Current_E += dE;
+                }
             }
         }
-        else
+
+        bar.Wait();
+
+        // White
+        for (int i = thread_first_layer; i <= thread_last_layer; i++)
         {
-            for (int i = thread_first_layer; i <= thread_last_layer; i++)
+            black = i % 2;
+            for (int j = !black; j <= last_j; j += 2)
             {
-                odd = i % 2;
-                for (int j = !odd; j <= last_j; j += 2)
+                energy_before_change = izing.near_bounds_energy(i, j);
+                dE = -2 * energy_before_change;
+                change_spin = false;
+                if (dE > 0)
                 {
-                    energy_before_change = izing.near_bounds_energy(i, j);
-                    dE = -2 * energy_before_change;
-                    change_spin = false;
-                    if (dE > 0)
-                    {
-                        R = std::exp(-dE / izing.kT);
-                        if (R > distr(gen))
-                        {
-                            izing.config[i][j] *= -1;
-                            Current_M += 2 * izing.config[i][j];
-                            Current_E += dE;
-                        }
-                    }
-                    else
+                    R = std::exp(-dE / izing.kT);
+                    if (R > distr(gen))
                     {
                         izing.config[i][j] *= -1;
                         Current_M += 2 * izing.config[i][j];
                         Current_E += dE;
                     }
                 }
+                else
+                {
+                    izing.config[i][j] *= -1;
+                    Current_M += 2 * izing.config[i][j];
+                    Current_E += dE;
+                }
             }
         }
-
         izing.Magnetizations[thread_id][step] = Current_M;
         izing.Energy[thread_id][step] = Current_E;
         bar.Wait();
@@ -511,7 +510,7 @@ void Izing::layered_chess(unsigned long int steps, double kT_in, int number_of_t
     // Initialization Metropolis parameters
     Number_of_threads = number_of_threads;
     kT = kT_in;
-    steps = steps / (Lattice_size * Lattice_size / 2);
+    steps = steps / (Lattice_size * Lattice_size);
     Steps = steps;
     layer_hight = Lattice_size / Number_of_threads;
     Magnetizations.resize(Number_of_threads);
@@ -533,8 +532,8 @@ void Izing::layered_chess(unsigned long int steps, double kT_in, int number_of_t
     // Join threads
     for (int i = 0; i < Number_of_threads - 1; i++)
         threads[i].join();
-    //cout << std::endl;
-    // Calculate time
+    // cout << std::endl;
+    //  Calculate time
     work_time = (clock() - start_time) / ((double)CLOCKS_PER_SEC * Number_of_threads);
     return;
 }

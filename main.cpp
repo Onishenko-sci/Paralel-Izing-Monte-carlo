@@ -42,7 +42,8 @@ int main()
     {   
         A.init(40);
         std::cout << cores[i] << ";";
-        A.layered_chess(10e+7, 1.8,cores[i]);
+        A.layered_chess(10e+6, 0.8,cores[i]);
+        A.show();
         std::cout << A.how_long() << ";\n";
       //  sleep_for(1s);
     }
