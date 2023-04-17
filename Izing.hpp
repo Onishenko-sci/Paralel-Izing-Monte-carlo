@@ -38,6 +38,7 @@ private:
 public:
     Izing(double J, double h = 0);
     void init(const size_t Lattice_Size);
+    void safe_data(const char* name);
 
     void warming_up(unsigned long int steps, double kT, int Number_of_threads = 4);
     void layered_rand(unsigned long long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);

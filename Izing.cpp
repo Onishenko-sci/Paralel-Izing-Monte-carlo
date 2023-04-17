@@ -27,6 +27,18 @@ double Izing::block()
     return steps_with_block / double(Steps * Number_of_threads);
 }
 
+void Izing::safe_data(const char *name)
+{
+    std::ofstream A(name);
+    for (int i = 0; i < Steps; i++)
+    {
+        A << i << ";";
+        for (int j = 0; j < Number_of_threads; j++)
+            A << Magnetizations[j][i] << ";";
+        A << "\n";
+    }
+}
+
 void Izing::write_relative_step()
 {
     std::ofstream A("relative_steps.txt");
@@ -274,7 +286,7 @@ void rand_spin(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
     int Current_E = 0;
     for (int i = thread_first_layer; i <= thread_last_layer; i++)
     {
-        for (int j = 0; j < izing.Lattice_size - 1; j++)
+        for (int j = 0; j < izing.Lattice_size ; j++)
         {
             Current_M += izing.config[i][j];
             Current_E += izing.near_bounds_energy(i, j);
@@ -415,13 +427,14 @@ void chess(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
     int Current_E = 0;
     for (int i = thread_first_layer; i <= thread_last_layer; i++)
     {
-        for (int j = 0; j < izing.Lattice_size - 1; j++)
+        for (int j = 0; j < izing.Lattice_size ; j++)
         {
             Current_M += izing.config[i][j];
             Current_E += izing.near_bounds_energy(i, j);
             if (i == thread_last_layer && thread_id != Last_thread_id)
                 Current_E += izing.J * izing.config[i][j] * izing.config[i + 1][j];
         }
+        cout << thread_id << ": " << Current_M<< std::endl;
     }
 
     bool black = false;

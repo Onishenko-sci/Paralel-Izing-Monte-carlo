@@ -14,7 +14,7 @@ double mean(int N_of_exp, double fr, int core)
     for (int i = 0; i < N_of_exp; i++)
     {
         A.init(4);
-        A.layered_rand(10e+7, 2.0, fr, core);
+        A.layered_rand(10e+6, 2.0, fr, core);
         experiments[i] = A.how_long();
         sum += experiments[i];
         sleep_for(1s);
@@ -31,22 +31,29 @@ int main()
 
     int cores[] = {1, 2, 3, 4};
     double Temperature[] = {0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 5.0};
-    double fr_rate[] = {2, 4, 16, 64, 128, 0};
+  //  double fr_rate[] = {2, 4, 16, 64, 128, 0};
+    double fr_rate[] = {0, 5, 10, 15, 20, 25, 30,35,40,60,90,150,1000,10000};
     double ll[] = {4,6,8,9};
     int i = 0000;
         using namespace std::chrono_literals;
     using namespace std::this_thread;
 
     int core = 2;
-    for (int i = 0; i < 4; i++)
+    A.init(48);
+    A.layered_rand(10e+6, 0.8,1000,  4);
+    A.show();
+    A.safe_data("test.txt");
+/*
+    for (int i = 0; i < 14; i++)
     {   
-        A.init(40);
-        std::cout << cores[i] << ";";
-        A.layered_chess(10e+6, 0.8,cores[i]);
-        A.show();
+        A.init(48);
+        std::cout << fr_rate[i] << ";";
+        A.layered_rand(10e+7, 0.8, fr_rate[i], core);
+      //  A.show();
         std::cout << A.how_long() << ";\n";
       //  sleep_for(1s);
     }
-    A.show();
+   // A.show();
+*/
     return 0;
 }
