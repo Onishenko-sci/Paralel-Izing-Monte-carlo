@@ -93,13 +93,18 @@ Izing::Izing(double init_J, double init_h)
     h = init_h;
 }
 
-void Izing::init(size_t lattice_size)
+void Izing::init(size_t lattice_size, int seed)
 {
     Lattice_size = lattice_size;
     config.resize(Lattice_size);
 
-    std::random_device rd;
-    std::mt19937 generator(rd());
+    if (!seed)
+    {
+        std::random_device rd;
+        seed = rd();
+    }
+    std::mt19937 generator(seed);
+
     std::uniform_int_distribution<int> distr(0, 1);
     for (int i = 0; i < Lattice_size; i++)
     {
@@ -286,7 +291,7 @@ void rand_spin(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
     int Current_E = 0;
     for (int i = thread_first_layer; i <= thread_last_layer; i++)
     {
-        for (int j = 0; j < izing.Lattice_size ; j++)
+        for (int j = 0; j < izing.Lattice_size; j++)
         {
             Current_M += izing.config[i][j];
             Current_E += izing.near_bounds_energy(i, j);
@@ -427,14 +432,13 @@ void chess(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
     int Current_E = 0;
     for (int i = thread_first_layer; i <= thread_last_layer; i++)
     {
-        for (int j = 0; j < izing.Lattice_size ; j++)
+        for (int j = 0; j < izing.Lattice_size; j++)
         {
             Current_M += izing.config[i][j];
             Current_E += izing.near_bounds_energy(i, j);
             if (i == thread_last_layer && thread_id != Last_thread_id)
                 Current_E += izing.J * izing.config[i][j] * izing.config[i + 1][j];
         }
-        cout << thread_id << ": " << Current_M<< std::endl;
     }
 
     bool black = false;
