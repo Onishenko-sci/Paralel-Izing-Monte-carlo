@@ -3,7 +3,7 @@
 *.vscode
 ./Barrier.cpp
 .gitignore
-
+*.txt
 
 # Compiled Object files
 *.slo
