@@ -2,6 +2,9 @@
 *.d
 *.vscode
 ./Barrier.cpp
+.gitignore
+
+
 # Compiled Object files
 *.slo
 *.lo
