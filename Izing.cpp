@@ -154,13 +154,7 @@ void warm(size_t thread_id, Izing &izing, unsigned int steps)
     // Rows numbers generated inside of strip for current thread.
     std::uniform_int_distribution<int> random_i(thread_first_layer, thread_last_layer);
     std::uniform_int_distribution<int> random_j(0, izing.Lattice_size - 1);
-    /*
-        izing.synch.lock();
-        cout << "Thread " << thread_id
-             << " for Layers " << thread_first_layer + 1 << "-" << thread_last_layer + 1 << " "
-             << "started.\n";
-        izing.synch.unlock();
-    */
+
     int Spin_i;
     int Spin_j;
     double energy_before_change;
@@ -174,9 +168,6 @@ void warm(size_t thread_id, Izing &izing, unsigned int steps)
         // Random spin
         Spin_i = random_i(gen);
         Spin_j = random_j(gen);
-        // Progress bar
-        if (step % (steps / 5) == 0)
-            cout << thread_id << std::flush;
 
         // Calculating dE
         // For contiguous rows using Mutex
@@ -220,7 +211,6 @@ void warm(size_t thread_id, Izing &izing, unsigned int steps)
                 izing.config[Spin_i][Spin_j] *= -1;
         }
     }
-    // cout << thread_id << " end his work.\n";
     return;
 }
 
@@ -258,7 +248,6 @@ void Izing::warming_up(unsigned long int steps, double kT_in, int number_of_thre
     for (int i = 0; i < Number_of_threads - 1; i++)
         threads[i].join();
 
-    cout << std::endl;
     // Calculate time
     work_time = (clock() - start_time) / ((double)CLOCKS_PER_SEC * Number_of_threads);
     delete[] Mutexi;
@@ -284,7 +273,6 @@ void rand_spin(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
     double R;
     int Last_thread_id = izing.Number_of_threads - 1;
     bool change_spin;
-
     // cout << thread_id << ": " << thread_first_layer << " to  " << thread_last_layer << " started\n";
 
     int Current_M = 0;
@@ -307,8 +295,8 @@ void rand_spin(size_t thread_id, Izing &izing, unsigned int steps, Barrier &bar)
         // Random spin
         Spin_i = random_i(gen);
         Spin_j = random_j(gen);
+        
         // Progress bar
-
         //  if (step % (steps / 20) == 0)
         //     cout << thread_id << std::flush;
 
@@ -407,8 +395,7 @@ void Izing::layered_rand(unsigned long long int steps, double kT_in, int frame_r
     // Join threads
     for (int i = 0; i < Number_of_threads - 1; i++)
         threads[i].join();
-    // cout << std::endl;
-    // Calculate time
+
     work_time = (clock() - start_time) / ((double)CLOCKS_PER_SEC * Number_of_threads);
     delete[] Mutexi;
     return;
