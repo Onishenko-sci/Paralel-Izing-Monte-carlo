@@ -30,18 +30,22 @@ private:
     friend void warm(size_t thread_id, Izing &lattice, unsigned int steps);
     friend void rand_spin(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
 
+    friend void ordered_spin(size_t thread_id, Izing &lattice, unsigned int steps, Barrier &bar);
+
     friend void chess(size_t thread_id, Izing &lattice, unsigned int steps, Barrier& bar);
     long int Steps;
     double work_time;
     double near_bounds_energy(int i, int j);
 
 public:
-    Izing(double J, double h = 0);
+    Izing(double J = 1, double h = 0);
     void init(const size_t Lattice_Size, int seed = 0);
-    void safe_data(const char* name);
+    void save_Energy(const char *name);
+    void save_Magnetization(const char *name);
 
     void warming_up(unsigned long int steps, double kT, int Number_of_threads = 4);
-    void layered_rand(unsigned long long int steps, double kT, int frame_rate = 0, int Number_of_threads = 4);
+    void layered_rand(unsigned long long int steps, double kT, int frame_rate = 1000, int Number_of_threads = 4);
+    void layered_order(unsigned long long int steps, double kT, int frame_rate = 1, int Number_of_threads = 4);
 
     void layered_chess(unsigned long int steps, double kT, int Number_of_threads = 4);
     void write_relative_step();

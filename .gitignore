@@ -5,7 +5,7 @@
 .gitignore
 *.txt
 /data
-/tests
+
 
 # Compiled Object files
 *.slo
