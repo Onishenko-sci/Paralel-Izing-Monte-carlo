@@ -12,7 +12,7 @@ int main()
     int Number_of_threads = 1;
     int order_frame_rate = 1;
     int rand_frame_rate = 1000;
-    int Number_of_experiments = 100;
+    int Number_of_experiments = 1000;
     int max_steps = 1000;
     std::vector<int> Rand_steps;
     std::vector<int> order_steps;
@@ -28,7 +28,7 @@ int main()
         int ACount = 0;
         while ((A.config_energy() > -480) && (ACount < max_steps))
         {
-            A.layered_order(steps, Temperature, order_frame_rate, Number_of_threads);
+            A.layered_chess(steps, Temperature, Number_of_threads);
             ACount++;
         }
         order_steps.push_back(ACount);
@@ -36,16 +36,16 @@ int main()
         int BCount = 0;
         while ((B.config_energy() > -480) && (BCount < max_steps))
         {
-            B.layered_rand(steps, Temperature, rand_frame_rate, Number_of_threads);
+            B.layered_order(steps, Temperature, order_frame_rate, Number_of_threads);
             BCount++;
         }
         Rand_steps.push_back(BCount);
         std::cout << i << ' ' << ACount << ' ' << BCount << '\n';
     }
     std::cout << "Temperature: " << Temperature << '\n';
-    std::cout << "Number of experiments: " << Number_of_experiments << "\nRand Steps\n";
+    std::cout << "Number of experiments: " << Number_of_experiments << "\nOrder Steps\n";
     report(Rand_steps);
-    std::cout << "Order Steps\n";
+    std::cout << "Chess Steps\n";
     report(order_steps);
 
     //   A.save_Energy("E_order4.txt");
